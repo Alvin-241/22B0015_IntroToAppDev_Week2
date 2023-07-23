@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(BudgetTrackerApp());
+}
+
+class BudgetTrackerApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  final List<String> categories = ['Bills', 'Rent', 'Other'];
+  final double totalBudget = 1000.0;
+  final double totalExpenses = 600.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Budget Tracker')),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Welcome, Alvin!', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 20),
+            Text('Total Budget: \Rs${totalBudget.toStringAsFixed(2)}'),
+            SizedBox(height: 10),
+            Text('Total Expenses: \Rs${totalExpenses.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 18)),
+            SizedBox(height: 20),
+            Text('Categories:', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(categories[index]),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ExpenseScreen(category: categories[index])),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ExpenseScreen extends StatelessWidget {
+  final String category;
+  final List<String> expenses = ['Expense 1 -Rs 100', 'Expense 2 - Rs100'];
+
+  ExpenseScreen({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(category)),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Expenses:', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: expenses.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(expenses[index]),
+                  );
+                },
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AddExpensePopup(),
+                );
+              },
+              child: Text('Add Expense'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AddExpensePopup extends StatelessWidget {
+  final TextEditingController valueController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Add Expense'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: valueController,
+            decoration: InputDecoration(labelText: 'Expense Value'),
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+          ),
+          TextField(
+            controller: descriptionController,
+            decoration: InputDecoration(labelText: 'Description'),
+          ),
+        ],
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            // Add expense logic goes here
+            Navigator.pop(context);
+          },
+          child: Text('Add Expense'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Cancel'),
+        ),
+      ],
+    );
+  }
+}
